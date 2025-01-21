@@ -12,6 +12,7 @@ import Reconciliation from "./pages/Reconciliation";
 import Analytics from "./pages/Analytics";
 import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
+import InvoiceUpload from "./pages/InvoiceUpload";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Index />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/invoice-upload"
+            element={
+              <ProtectedRoute>
+                <InvoiceUpload />
               </ProtectedRoute>
             }
           />

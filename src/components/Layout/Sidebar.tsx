@@ -7,6 +7,7 @@ import {
   BarChart3,
   Bell,
   Settings,
+  Upload,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -18,6 +19,7 @@ const Sidebar = ({ isMobile = false }: SidebarProps) => {
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+    { icon: Upload, label: "Invoice Upload", path: "/invoice-upload" },
     { icon: CreditCard, label: "ITC Eligibility", path: "/itc-eligibility" },
     { icon: FileCheck, label: "Reconciliation", path: "/reconciliation" },
     { icon: BarChart3, label: "Analytics", path: "/analytics" },
