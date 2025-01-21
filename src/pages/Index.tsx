@@ -25,7 +25,7 @@ import {
   Star,
   Workflow,
   MessageSquare,
-  Timeline
+  History
 } from "lucide-react";
 
 const FeatureCard = ({ title, status, icon: Icon }: { 
@@ -45,7 +45,11 @@ const FeatureCard = ({ title, status, icon: Icon }: {
 );
 
 const Index = () => {
-  const features = [
+  const features: Array<{
+    title: string;
+    icon: React.ElementType;
+    status: "live" | "coming-soon";
+  }> = [
     { title: "Invoice Upload/Integration", icon: Upload, status: "live" },
     { title: "AI-Driven Invoice Data Extraction", icon: Brain, status: "coming-soon" },
     { title: "ITC Eligibility Tracker", icon: Calculator, status: "live" },
@@ -61,7 +65,7 @@ const Index = () => {
     { title: "Supplier Compliance Rating", icon: Star, status: "coming-soon" },
     { title: "Customizable Compliance Workflows", icon: Workflow, status: "coming-soon" },
     { title: "AI Chatbot for Supplier Compliance", icon: MessageSquare, status: "coming-soon" },
-    { title: "Timeline with Alerts", icon: Timeline, status: "coming-soon" }
+    { title: "Timeline with Alerts", icon: History, status: "coming-soon" }
   ];
 
   return (
