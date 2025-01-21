@@ -9,7 +9,11 @@ import {
   Settings,
 } from "lucide-react";
 
-const Sidebar = () => {
+interface SidebarProps {
+  isMobile?: boolean;
+}
+
+const Sidebar = ({ isMobile = false }: SidebarProps) => {
   const location = useLocation();
 
   const menuItems = [
@@ -21,15 +25,19 @@ const Sidebar = () => {
     { icon: Settings, label: "Settings", path: "/settings" },
   ];
 
+  const sidebarClasses = isMobile
+    ? "flex h-full w-full flex-col bg-white"
+    : "flex h-screen w-64 flex-col bg-white border-r border-gray-200";
+
   return (
-    <div className="hidden lg:flex h-screen w-64 flex-col bg-white border-r border-gray-200 p-4">
-      <div className="flex items-center gap-2 px-2 mb-8">
+    <div className={sidebarClasses}>
+      <div className="flex items-center gap-2 px-4 py-6 border-b border-gray-200">
         <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
           <span className="text-white font-bold">ITC</span>
         </div>
         <span className="text-xl font-semibold">ITC Manager</span>
       </div>
-      <nav className="space-y-1">
+      <nav className="flex-1 space-y-1 p-4">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
