@@ -5,6 +5,9 @@ import { ChartContainer, ChartLegend, ChartTooltip } from "@/components/ui/chart
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type ITCClaim = Database['public']['Tables']['itc_claims']['Row'];
 
 const Analytics = () => {
   const { data: itcData, isLoading } = useQuery({
@@ -16,7 +19,7 @@ const Analytics = () => {
         .order('claim_date', { ascending: true });
       
       if (error) throw error;
-      return data;
+      return data as ITCClaim[];
     }
   });
 

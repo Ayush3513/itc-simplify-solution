@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      itc_claims: {
+        Row: {
+          amount: number
+          claim_date: string
+          created_at: string
+          eligible_amount: number
+          id: string
+          invoice_number: string
+          status: string | null
+          supplier_gstin: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          claim_date: string
+          created_at?: string
+          eligible_amount: number
+          id?: string
+          invoice_number: string
+          status?: string | null
+          supplier_gstin: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          claim_date?: string
+          created_at?: string
+          eligible_amount?: number
+          id?: string
+          invoice_number?: string
+          status?: string | null
+          supplier_gstin?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           annual_turnover: number | null
