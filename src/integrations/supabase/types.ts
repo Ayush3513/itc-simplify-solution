@@ -9,6 +9,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      compliance_checks: {
+        Row: {
+          check_type: string
+          created_at: string
+          details: Json | null
+          id: string
+          status: string
+          supplier_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          check_type: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          status: string
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          check_type?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          status?: string
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_checks_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       itc_claims: {
         Row: {
           amount: number
@@ -72,6 +110,39 @@ export type Database = {
           gstin?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      suppliers: {
+        Row: {
+          company_name: string
+          compliance_score: number | null
+          created_at: string
+          gstin: string
+          id: string
+          last_verified_at: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          company_name: string
+          compliance_score?: number | null
+          created_at?: string
+          gstin: string
+          id?: string
+          last_verified_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          company_name?: string
+          compliance_score?: number | null
+          created_at?: string
+          gstin?: string
+          id?: string
+          last_verified_at?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
