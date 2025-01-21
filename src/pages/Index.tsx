@@ -3,9 +3,67 @@ import MainLayout from "@/components/Layout/MainLayout";
 import StatCard from "@/components/Dashboard/StatCard";
 import RecentActivity from "@/components/Dashboard/RecentActivity";
 import CreditUtilization from "@/components/Dashboard/CreditUtilization";
-import { IndianRupee, TrendingUp, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { 
+  IndianRupee, 
+  TrendingUp, 
+  AlertTriangle, 
+  CheckCircle2,
+  Upload,
+  Brain,
+  Calculator,
+  FileCheck,
+  UserCheck,
+  PieChart,
+  Bell,
+  BarChart,
+  Smartphone,
+  Globe,
+  Wifi,
+  Moon,
+  Star,
+  Workflow,
+  MessageSquare,
+  Timeline
+} from "lucide-react";
+
+const FeatureCard = ({ title, status, icon: Icon }: { 
+  title: string; 
+  status: "live" | "coming-soon"; 
+  icon: React.ElementType;
+}) => (
+  <Card className="p-4 flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      <Icon className="w-5 h-5 text-primary" />
+      <span className="font-medium">{title}</span>
+    </div>
+    <Badge variant={status === "live" ? "default" : "secondary"}>
+      {status === "live" ? "Live" : "Coming Soon"}
+    </Badge>
+  </Card>
+);
 
 const Index = () => {
+  const features = [
+    { title: "Invoice Upload/Integration", icon: Upload, status: "live" },
+    { title: "AI-Driven Invoice Data Extraction", icon: Brain, status: "coming-soon" },
+    { title: "ITC Eligibility Tracker", icon: Calculator, status: "live" },
+    { title: "Reconciliation Management", icon: FileCheck, status: "live" },
+    { title: "Supplier Compliance Monitoring", icon: UserCheck, status: "coming-soon" },
+    { title: "Credit Utilization Optimization", icon: PieChart, status: "live" },
+    { title: "Intelligent Alerts", icon: Bell, status: "coming-soon" },
+    { title: "Analytics & Reporting", icon: BarChart, status: "live" },
+    { title: "Mobile-First Design", icon: Smartphone, status: "live" },
+    { title: "Multilingual Support", icon: Globe, status: "coming-soon" },
+    { title: "Offline Mode", icon: Wifi, status: "coming-soon" },
+    { title: "Dark Mode", icon: Moon, status: "coming-soon" },
+    { title: "Supplier Compliance Rating", icon: Star, status: "coming-soon" },
+    { title: "Customizable Compliance Workflows", icon: Workflow, status: "coming-soon" },
+    { title: "AI Chatbot for Supplier Compliance", icon: MessageSquare, status: "coming-soon" },
+    { title: "Timeline with Alerts", icon: Timeline, status: "coming-soon" }
+  ];
+
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -47,6 +105,20 @@ const Index = () => {
           </div>
           <div className="w-full">
             <RecentActivity />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Features & Roadmap</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {features.map((feature) => (
+              <FeatureCard
+                key={feature.title}
+                title={feature.title}
+                status={feature.status}
+                icon={feature.icon}
+              />
+            ))}
           </div>
         </div>
       </div>
