@@ -6,12 +6,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import MainLayout from "@/components/Layout/MainLayout";
 import { supabase } from "@/integrations/supabase/client";// Ensure you have a Supabase client set up
 import { Invoice } from "@/integrations/supabase/types"; // Implied import for the Invoice type
+import { useNavigate } from "react-router-dom";
 
 export default function InvoiceUpload() {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const [invoiceData, setInvoiceData] = useState<any | null>(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Function to upload the file and process it using Mindee API
   const handleFileUpload = useCallback(
