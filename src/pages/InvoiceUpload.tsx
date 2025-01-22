@@ -4,6 +4,8 @@ import { useCallback, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import MainLayout from "@/components/Layout/MainLayout";
+import { supabase } from "@/integrations/supabase/client";// Ensure you have a Supabase client set up
+import { Invoice } from "@/integrations/supabase/types"; // Implied import for the Invoice type
 
 export default function InvoiceUpload() {
   const { toast } = useToast();
@@ -146,20 +148,17 @@ export default function InvoiceUpload() {
 
        const importantData = data.document.inference.prediction;
 
-       // Step 4: Set the extracted data to the state for further use
-       if (importantData && importantData.invoicenumber) {
-        
+       if (importantData) {
          setInvoiceData({
            invoiceNumber: importantData.invoicenumber?.value || "",
            invoiceDate: importantData.invoice_date?.value || "",
            buyerGstin: importantData.buyergstin?.value || "",
            supplierGstin: importantData.suppliergstin?.value || "",
            taxAmount: {
-             cgst: importantData.taxamount?.cgst || "",
-             sgst: importantData.taxamount?.sgst || "",
-             igst: importantData.taxamount?.igst || "",
-             totalAmount: importantData.taxamount?.total_amount || "",
-             withoutTax: importantData.taxamount?.without_tax || "",
+             cgst: parseFloat(importantData.taxamount?.cgst) || 0,
+             sgst: parseFloat(importantData.taxamount?.sgst) || 0,
+             igst: parseFloat(importantData.taxamount?.igst) || 0,
+             totalAmount: parseFloat(importantData.taxamount?.total_amount) || 0,
            },
          });
 
@@ -202,12 +201,45 @@ export default function InvoiceUpload() {
     e.preventDefault();
   }, []);
 
+  const handleSubmit = async () => {
+    if (invoiceData) {
+      const { error } = await supabase
+        .from<Invoice>("invoices") // Ensure this matches your Supabase table name
+        .insert([
+          {
+            invoice_number: invoiceData.invoiceNumber,
+            invoice_date: invoiceData.invoiceDate,
+            buyer_gstin: invoiceData.buyerGstin,
+            supplier_gstin: invoiceData.supplierGstin,
+            cgst: invoiceData.taxAmount.cgst ? parseFloat(invoiceData.taxAmount.cgst) : null,
+            sgst: invoiceData.taxAmount.sgst ? parseFloat(invoiceData.taxAmount.sgst) : null,
+            igst: invoiceData.taxAmount.igst ? parseFloat(invoiceData.taxAmount.igst) : null,
+            total_amount: parseFloat(invoiceData.taxAmount.totalAmount),
+          },
+        ]);
+
+      if (error) {
+        toast({
+          title: "Error saving invoice",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Invoice saved successfully",
+          description: "Your invoice data has been stored.",
+        });
+      }
+    }
+  };
+
   return (
     <MainLayout>
-      <Card className="p-6">
+      <Card className="p-6 shadow-lg rounded-lg border border-gray-200">
+        <h1 className="text-2xl font-semibold mb-4 text-center">Upload Your Invoice</h1>
         <div
-          className={`border-2 border-dashed border-gray-300 rounded-lg p-12 text-center ${
-            isUploading ? "opacity-50" : ""
+          className={`border-2 border-dashed border-gray-300 rounded-lg p-12 text-center transition-all duration-300 ${
+            isUploading ? "opacity-50" : "hover:border-primary-500"
           }`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
@@ -247,43 +279,90 @@ export default function InvoiceUpload() {
 
       {/* Render invoice data */}
       {invoiceData && (
-        <div className="mt-6 p-4 border-t-2 border-gray-300">
+        <Card className="mt-6 p-4 shadow-md border border-gray-200">
           <h2 className="text-xl font-semibold mb-4">Invoice Details</h2>
-          <p>
-            <strong>Invoice Number:</strong> {invoiceData.invoiceNumber}
-          </p>
-          <p>
-            <strong>Invoice Date:</strong> {invoiceData.invoiceDate}
-          </p>
-          <p>
-            <strong>Buyer GSTIN:</strong> {invoiceData.buyerGstin}
-          </p>
-          <p>
-            <strong>Supplier GSTIN:</strong> {invoiceData.supplierGstin}
-          </p>
-          <p>
-            <strong>Taxable Amount (without tax):</strong>{" "}
-            {invoiceData.taxAmount.withoutTax}
-          </p>
-          <p>
-            <strong>Total Amount:</strong> {invoiceData.taxAmount.totalAmount}
-          </p>
-
-          {/* Tax Amount */}
-          <div className="mt-2">
-            <h3 className="font-medium">Tax Amount:</h3>
-            <p>
-              <strong>CGST:</strong> {invoiceData.taxAmount.cgst}
-            </p>
-            <p>
-              <strong>SGST:</strong> {invoiceData.taxAmount.sgst}
-            </p>
-            <p>
-              <strong>IGST:</strong> {invoiceData.taxAmount.igst}
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Invoice Number</label>
+              <input
+                type="text"
+                value={invoiceData.invoiceNumber}
+                onChange={(e) => setInvoiceData({ ...invoiceData, invoiceNumber: e.target.value })}
+                className="border rounded p-2 w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Invoice Date</label>
+              <input
+                type="date"
+                value={invoiceData.invoiceDate}
+                onChange={(e) => setInvoiceData({ ...invoiceData, invoiceDate: e.target.value })}
+                className="border rounded p-2 w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Buyer GSTIN</label>
+              <input
+                type="text"
+                value={invoiceData.buyerGstin}
+                onChange={(e) => setInvoiceData({ ...invoiceData, buyerGstin: e.target.value })}
+                className="border rounded p-2 w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Supplier GSTIN</label>
+              <input
+                type="text"
+                value={invoiceData.supplierGstin}
+                onChange={(e) => setInvoiceData({ ...invoiceData, supplierGstin: e.target.value })}
+                className="border rounded p-2 w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Total Amount</label>
+              <input
+                type="text"
+                value={invoiceData.taxAmount.totalAmount}
+                onChange={(e) => setInvoiceData({ ...invoiceData, taxAmount: { ...invoiceData.taxAmount, totalAmount: e.target.value } })}
+                className="border rounded p-2 w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">CGST</label>
+              <input
+                type="text"
+                value={invoiceData.taxAmount.cgst}
+                onChange={(e) => setInvoiceData({ ...invoiceData, taxAmount: { ...invoiceData.taxAmount, cgst: e.target.value } })}
+                className="border rounded p-2 w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">SGST</label>
+              <input
+                type="text"
+                value={invoiceData.taxAmount.sgst}
+                onChange={(e) => setInvoiceData({ ...invoiceData, taxAmount: { ...invoiceData.taxAmount, sgst: e.target.value } })}
+                className="border rounded p-2 w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">IGST</label>
+              <input
+                type="text"
+                value={invoiceData.taxAmount.igst}
+                onChange={(e) => setInvoiceData({ ...invoiceData, taxAmount: { ...invoiceData.taxAmount, igst: e.target.value } })}
+                className="border rounded p-2 w-full"
+              />
+            </div>
           </div>
-        </div>
+          <button
+            onClick={handleSubmit}
+            className="mt-4 bg-blue-500 text-white rounded p-2"
+          >
+            Submit Invoice
+          </button>
+        </Card>
       )}
     </MainLayout>
   );
-}
+};

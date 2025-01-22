@@ -258,3 +258,15 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export type Invoice = {
+  id?: string; // Optional if you are using auto-incrementing IDs
+  invoice_number: string;
+  invoice_date: string;
+  buyer_gstin: string;
+  supplier_gstin: string;
+  cgst: string;
+  sgst: string;
+  igst: string;
+  total_amount: string;
+};
